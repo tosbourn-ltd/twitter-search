@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Twitter Search and Save
+Outputs:
+  SearchTwitterFunction:
+    Description: Search Twitter and save the results
+    Value:
+      Fn::GetAtt:
+      - SearchTwitterFunction
+      - Arn
+Resources:
+  SearchTwitterFunction:
+    Properties:
+      CodeUri: s3://tosbournltdlambdafunctions/775c8dfa64078e8cbbf5c5557caf49a4
+      Environment:
+        Variables:
+          DDB_TABLE:
+            Ref: TwitterDDBTable
+      Handler: search_twitter.put_item
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: TwitterDDBTable
+      Runtime: ruby2.5
+    Type: AWS::Serverless::Function
+  TwitterDDBTable:
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+    Type: AWS::Serverless::SimpleTable
+Transform: AWS::Serverless-2016-10-31
